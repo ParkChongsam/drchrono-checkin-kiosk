@@ -1,0 +1,9 @@
+Django==1.11.8
+oauth
+oauth2
+oauth2client
+oauthlib
+python-social-auth[django]
+requests
+requests-oauth2
+requests-oauthlib
