@@ -25,7 +25,14 @@ SECRET_KEY = Keys.SECRET_KEY
 
 SOCIAL_AUTH_DRCHRONO_KEY = Keys.CLIENT_ID
 SOCIAL_AUTH_DRCHRONO_SECRET = Keys.CLIENT_SECRET
-SOCIAL_AUTH_DRCHRONO_SCOPE = ['patients:read', 'patients:write', 'clinical:read']
+SOCIAL_AUTH_DRCHRONO_SCOPE = [
+    'patients:read', 
+    'patients:write', 
+    'clinical:read',
+    'clinical:write',
+    'calendar:read',
+    'calendar:write'
+    ]
 LOGIN_REDIRECT_URL = '/checkin_kiosk'
 
 # SECURITY WARNING: don't run with debug turned on in production!

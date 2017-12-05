@@ -7,3 +7,4 @@ python-social-auth[django]
 requests
 requests-oauth2
 requests-oauthlib
+django-localflavor

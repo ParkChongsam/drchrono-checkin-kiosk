@@ -1,0 +1,27 @@
+.w3-bar{padding-left:18px;width:100%;overflow:hidden}.w3-center .w3-bar{display:inline-block;width:auto}
+.w3-bar .w3-bar-item{padding:8px 16px;float:left;width:auto;border:none;outline:none;display:block}
+.w3-bar-block .w3-bar-item{width:100%;display:block;padding:8px 16px;text-align:left;border:none;outline:none;white-space:normal;float:none}
+.navig-container a{
+color:#FFFFFF;text-decoration: none;
+}
+
+.navig-container a:hover { 
+color:#FFFFFF; text-decoration: none; 
+}
+.navig-container a:visited { 
+color:#FFFFFF; text-decoration: none; 
+}
+.navig-container a:active { 
+color:#FFFFFF; text-decoration: none; 
+}
+.navig-container a:after { 
+color:#FFFFFF; text-decoration: none; 
+}
+.navig-container a:focus { 
+color:#FFFFFF; text-decoration: none; 
+}
+
+.w3-black{
+background-color: rgb(49, 64, 78);
+}
+

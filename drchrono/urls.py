@@ -7,6 +7,6 @@ import views
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='home'),
     url(r'', include('social_django.urls', namespace='social')),
-    url(r'^birthday_reminder/', include('birthday_reminder.urls')),
+    url(r'^checkin_kiosk/', include('checkin_kiosk.urls')),
     url(r'^admin/', admin.site.urls),
 ]
