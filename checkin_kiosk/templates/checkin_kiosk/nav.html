@@ -1,0 +1,59 @@
+{% load staticfiles %} {% load app_filters %} {% load static %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<!--META-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Kiosk</title>
+<link type="image/png"	href="https://app.drchrono.com/site_media/images/favicon.png"	rel="icon"></link>
+<!--STYLESHEETS-->
+<link href="{% static 'checkin_kiosk/css/w3.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'checkin_kiosk/css/styling.css' %}" rel="stylesheet" type="text/css" />
+<!--SCRIPTS-->
+<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+
+</head>
+<body>
+
+	<nav class="navbar navbar-default navbar-fixed-top">
+	<div class="container" style="padding-right: 20px;padding-left: 20px;margin-left:10px;">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span> 
+				<span class="icon-bar"></span> 
+				<span class="icon-bar"></span> 
+				<span class="icon-bar"></span>
+			</button>
+			<img src="{% static 'images/logo-dark.svg'%}" vspace="5">
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li class=""><a href="#">Kiosk</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Signed in as {{ user }}</span></a>
+
+					<ul class="dropdown-menu">
+						<li></li>
+					</ul></li>
+			</ul>
+		</div>
+	</div>
+	</nav>
+<div class="container-fluid" style="margin-top:-24px;padding-right: 0px;padding-left: 0px;">
+
+<div class="navig-container">
+
+	<div class="w3-bar w3-border w3-black">
+	  <a href="{% url 'search_appointment' %}" style="" class="w3-bar-item w3-button ">Self Check-In</a>
+	</div>
+
+</div>
+
+</div>
+
+
+
+</body>
+</html>

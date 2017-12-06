@@ -33,7 +33,7 @@ SOCIAL_AUTH_DRCHRONO_SCOPE = [
     'calendar:read',
     'calendar:write'
     ]
-LOGIN_REDIRECT_URL = '/checkin_kiosk'
+LOGIN_REDIRECT_URL = '/checkin_kiosk/search'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

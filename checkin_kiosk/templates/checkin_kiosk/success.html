@@ -1,0 +1,26 @@
+{% load staticfiles %} {% load app_filters %} {% load static %}
+
+{% include "nav.html" %}
+
+    <script src="https://unpkg.com/jquery"></script>
+    
+    <script src="https://surveyjs.azureedge.net/0.12.17/survey.jquery.js"></script>
+
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+<div class="check_in" style="width:1170px;margin-right:auto;margin-left:auto;">
+
+ <h1> Check-In Status </h1>
+ <hr style="border-top: 1px solid #DDD;"></hr>
+
+ <div class="container" style="margin-top:30px">
+  <div class="col-md-10 col-md-offset-1">
+   <div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title"><strong>Success!   </strong></h3> </div>
+    <div class="panel-body">
+	You are successfully checked in to your appointment. Your appointment was scheduled in room number {{ room_id }}. Please wait for the attendant call.
+
+    </div>
+   </div>
+ </div>
+ </div>

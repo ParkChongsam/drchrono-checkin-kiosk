@@ -3,8 +3,18 @@ from localflavor.us.us_states import STATE_CHOICES
 from .shortcuts import Shortcuts
 
 class PatientSignInForm(forms.Form):
-    patient_first_name = forms.CharField(required=True)
-    patient_last_name = forms.CharField(required=True)
+    firstname = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'First Name'
+        }))
+    lastname = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Last Name'
+        }))
 
 class PatientDemographicsForm(forms.Form):
     first_name = forms.CharField(required=False)

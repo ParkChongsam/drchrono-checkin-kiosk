@@ -32,7 +32,7 @@ class API_Access(object):
         return patient_id
 
     def get_all_appointments_today(self):
-        today_date = datetime.date.today().strftime('%Y-%m-%d')
+        today_date = datetime.date.now().strftime('%Y-%m-%d')
         full_url = self.get_full_url('/api/appointments/', date=today_date)
         response = requests.get(full_url, headers=self.headers)
         data = response.json()
@@ -47,6 +47,7 @@ class API_Access(object):
     def get_appointments_by_patient_name(self, **kwargs):
         firstname = kwargs.pop('firstname', '')
         lastname = kwargs.pop('lastname', '')
+        info_present = kwargs.pop('info_present','False')
         today_date = datetime.datetime.now().strftime('%Y-%m-%d')
         patient_id = self.get_patient_id(firstname=firstname, lastname=lastname)
         full_url = self.get_full_url('/api/appointments', date=today_date, patient=patient_id)
@@ -56,25 +57,29 @@ class API_Access(object):
         appointment_details = []
         if data['results']:
             for i in range(len(data['results'])):
-                scheduled_time = data['results'][i]['scheduled_time']
-                duration = data['results'][i]['duration']
-                status = data['results'][i]['status']
-                if not status:
-                    status = Shortcuts.Statuses.NOT_CONFIRMED
-                reason = data['results'][i]['reason']
-                if not reason:
-                    reason = Shortcuts.Statuses.NOT_MENTIONED
+                if data['results'][i]['patient'] == patient_id:
+                    if info_present:
+                        return data['results'][i]
+
+                    scheduled_time = data['results'][i]['scheduled_time']
+                    duration = data['results'][i]['duration']
+                    status = data['results'][i]['status']
+                    if not status:
+                        status = Shortcuts.Statuses.NOT_CONFIRMED
+                    reason = data['results'][i]['reason']
+                    if not reason:
+                        reason = Shortcuts.Statuses.NOT_MENTIONED
                 
-                appointment = {
-                    'firstname': firstname,
-                    'lastname': lastname,
-                    'scheduled_time': scheduled_time,
-                    'duration': duration,
-                    'status': status,
-                    'reason': reason
-                }
-                appointment_details.append(appointment)
-                break
+                    appointment = {
+                        'firstname': firstname,
+                        'lastname': lastname,
+                        'scheduled_time': scheduled_time,
+                        'duration': duration,
+                        'status': status,
+                        'reason': reason
+                    }
+                    appointment_details.append(appointment)
+                    break
 
         return appointment_details
 
