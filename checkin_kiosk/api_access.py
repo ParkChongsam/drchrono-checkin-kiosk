@@ -3,10 +3,10 @@ import requests
 import urllib
 
 from .shortcuts import Shortcuts
-
+'''
 class API_Error(Exception):
     pass
-
+'''
 class API_Access(object):
     main_url = 'https://drchrono.com'
 

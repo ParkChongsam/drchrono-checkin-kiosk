@@ -13,15 +13,13 @@ from .forms import PatientSignInForm, PatientDemographicsForm
 from .models import Appointment
 from .api_access import API_Access
 from .shortcuts import Shortcuts
+from .helper_functions import get_user_access_token, get_current_appointment, split_appointments
 
 from dateutil import parser
 import datetime
 
-def get_user_access_token(user):
-    return user.social_auth.get(provider='drchrono').extra_data['access_token']
-
-# Create your views here.
-class CheckInView(View):
+# Views
+class CheckInPageView(View):
     form_class = PatientSignInForm
     template_name = 'checkin_kiosk/checkin_page.html'
 
@@ -53,7 +51,6 @@ class CheckInView(View):
                     lastname=last_name,
                     info_present=False
                 )
-                print response
                 context = {
                     'form': form,
                     'appointment_details': response,
@@ -108,7 +105,7 @@ class DemographicsFormView(FormView):
                 info_present = True
             )
             appointment_id = self.appointment['id']
-            self.appointment['status'] = Shortcuts.Statuses.ARRIVED
+            self.appointment['status'] = Shortcuts.Statuses.CHECKED_IN
             response = self.api_access.edit_appointment_information(appointment_id, self.appointment)
             if response.status_code != Shortcuts.ErrorCodes.SUCCESS:
                 print 'Error updating appointment info'
@@ -124,7 +121,7 @@ class DemographicsFormView(FormView):
                         name=name,
                         appointment_id=appointment_id,
                         patient_id=self.patient_id,
-                        status=Shortcuts.Statuses.ARRIVED,
+                        status=Shortcuts.Statuses.CHECKED_IN,
                         appointment_start_time=parser.parse(self.appointment['scheduled_time']),
                         duration = self.appointment['duration']
                     )
@@ -134,7 +131,7 @@ class DemographicsFormView(FormView):
                         return HttpResponseRedirect(reverse('demographic_form', args=[self.patient_id]))
                 
                 else:
-                    appointment_obj.status = Shortcuts.Statuses.ARRIVED
+                    appointment_obj.status = Shortcuts.Statuses.CHECKED_IN
                     appointment_obj.start_time = parser.parse(self.appointment['scheduled_time'])
                     appointment_obj.duration = self.appointment['duration']
                     appointment_obj.status_time = datetime.datetime.now()
@@ -142,7 +139,7 @@ class DemographicsFormView(FormView):
             
                 return HttpResponseRedirect(reverse('success', args=[self.appointment['office']]))
     
-class SuccessView(View):
+class SuccessPageView(FormView):
     template_name = 'checkin_kiosk/success.html'
     
     def get(self, request, *args, **kwargs):
@@ -151,6 +148,68 @@ class SuccessView(View):
             'room_id': room_id
         }
         return render(request, self.template_name, context)
+
+class DoctorPageView(FormView):
+    template_name = 'checkin_kiosk/doctor_page.html'
+
+    def get(self, request, *args, **kwargs):
+        current_appointment, appointments = split_appointments(request)
+        context = {
+            'current_appointment': current_appointment,
+            'appointments': appointments
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        if 'refresh' in request.POST:
+            current_appointment, appointments = split_appointments(request)
+            context = {
+                'current_appointment': current_appointment,
+                'appointments': appointments
+            }
+            return render(request, self.template_name, context)
+
+        elif 'begin' in request.POST:
+            appointment_id = request.POST.get('appointment_id')
+            patient_id = request.POST.get('patient_id')
+            appointment = Appointment.objects.get(appointment_id=appointment_id, patient_id=patient_id)
+            appointment.status = Shortcuts.Statuses.IN_SESSION
+            appointment.start_time = datetime.datetime.now()
+            appointment.save()
+            return HttpResponseRedirect(reverse('complete_session', args=[appointment_id]))
+
+class CompleteSessionPageView(FormView):
+    template_name = 'checkin_kiosk/complete_session.html'
+
+    def get(self, request, *args, **kwargs):
+        appointment_id = kwargs['appointment_id']
+        current_appointment = Appointment.objects.get(appointment_id=appointment_id)
+        context = {
+            'current_appointment': current_appointment,
+            'completed_appointment': None
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        appointment_id = kwargs['appointment_id']
+        appointment = Appointment.objects.get(appointment_id=appointment_id)
+        curr_appointment = appointment
+        appointment.status = Shortcuts.Statuses.COMPLETE
+        appointment.session_end_time = datetime.datetime.now()
+        appointment.save()
+        comp_appointment = Appointment.objects.get(appointment_id=appointment_id)
+        context = {
+            'current_appointment': curr_appointment,
+            'completed_appointment': comp_appointment
+        }
+        return render(request, self.template_name, context)
+
+
+
+    
+
+
+
 
 
 

@@ -12,7 +12,8 @@
    <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title"><strong>Please verify your demographics </strong></h3>  </div>
     <div class="panel-body">
-         <form method="POST" action="" class="form-horizontal">{% csrf_token %}
+         <form method="POST" action="{% url 'demographic_form' patient_id %}" class="form-horizontal">
+        {% csrf_token %}
 	    {% if form.errors %}
 		<p> Please correct the following highlighted error{{form.errors | pluralize}} below. </p>
 	    {% endif %}

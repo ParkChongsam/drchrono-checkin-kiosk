@@ -1,0 +1,64 @@
+{% load staticfiles %} {% load app_filters %} {% load static %}
+
+{% include "checkin_kiosk/nav.html" %}
+<style>
+.tss table {  
+    color: #333; /* Lighten up font color */
+    font-family: Helvetica, Arial, sans-serif; /* Nicer font */
+    width: 640px; 
+    border-collapse: 
+    collapse; border-spacing: 0; margin-left: 100px;
+}
+.tss td,th { border: 1px solid #CCC; height: 30px; } /* Make cells a bit taller */
+.tss td,th {  
+    background: #FAFAFA; /* Lighter grey background */
+    text-align: center; /* Center our text */
+}
+</style>
+
+<div class="check_in" style="width:1170px;margin-right:auto;margin-left:auto;">
+
+<h1> Appointment Status </h1>
+<hr style="border-top: 1px solid #DDD;"></hr>
+<form action="" method="POST" autocomplete="off"> {% csrf_token %}
+
+<div class="container" style="margin-top:0px">
+ <div class="col-md-10 col-md-offset-1">
+  <div class="panel panel-default">
+   <div class="panel-heading"><h3 class="panel-title"><strong>Current Appointment </strong></h3>  
+   </div>
+
+   <div class="panel-body tss" >
+{% if current_appointment %}
+	<table>
+		<tr><td>Name</td><td>{{current_appointment.name}}<input type="hidden" name="patient_id" value="{{current_appointment.patient_id}}" />   <input type="hidden" name="appointment_id" value="{{current_appointment.appointment_id}}" /> </td></tr>
+		<tr><td>Appointment</td><td>{{current_appointment.appointment_start_time}} ( {{current_appointment.duration}} minutes max)</td></tr>
+		<tr><td>Status</td><td>{{current_appointment.status}} from {{current_appointment.session_start_time}} </td></tr>
+	</table> <br>
+   	<button type="submit" class="btn btn-success" style="margin-left: 100px;" name="complete">Complete this Session</button>
+{% endif %}
+{% if not current_appointment%}
+There are no appointments in the current time slot.
+{% endif %}
+
+   </div>
+  </div>
+ </div>
+</div>
+
+{% if completed_appointment %}
+<div class="container" style="margin-top:0px">
+ <div class="col-md-10 col-md-offset-1">
+  <div class="panel panel-default">
+   <div class="panel-heading"><h3 class="panel-title"><strong>This Appointment Details </strong>   </div>
+   <div class="panel-body tss" >
+	<table style="width:750px;">
+		<tr><th>Name</th> <th>Appointment</th> <th> Status</th> <th> Start Time</th> <th> End Time</th> <th> Duration</th> </tr>
+		<tr><td>{{completed_appointment.name}}</td><td>{{completed_appointment.appointment_start_time}}</td><td>{{completed_appointment.status}}</td><td>{{completed_appointment.session_start_time}}</td><td>{{completed_appointment.session_end_time}}</td> <td>{{completed_appointment.session_start_time | duration:completed_appointment.session_end_time}} minutes </td> </tr>
+	</table>
+   </div>
+  </div>
+ </div>
+</div>
+{% endif %}
+</form>
