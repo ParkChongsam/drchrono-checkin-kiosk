@@ -1,4 +1,4 @@
-Django==1.11.8
+Django==1.8.3
 oauth
 oauth2
 oauth2client
@@ -8,3 +8,4 @@ requests
 requests-oauth2
 requests-oauthlib
 django-localflavor
+django-crispy-forms

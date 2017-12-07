@@ -3,10 +3,7 @@ import requests
 import urllib
 
 from .shortcuts import Shortcuts
-'''
-class API_Error(Exception):
-    pass
-'''
+
 class API_Access(object):
     main_url = 'https://drchrono.com'
 
@@ -32,8 +29,8 @@ class API_Access(object):
         return patient_id
 
     def get_all_appointments_today(self):
-        today_date = datetime.date.now().strftime('%Y-%m-%d')
-        full_url = self.get_full_url('/api/appointments/', date=today_date)
+        today_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        full_url = self.get_full_url('/api/appointments', date=today_date)
         response = requests.get(full_url, headers=self.headers)
         data = response.json()
         return data['results']
@@ -47,10 +44,10 @@ class API_Access(object):
     def get_appointments_by_patient_name(self, **kwargs):
         firstname = kwargs.pop('firstname', '')
         lastname = kwargs.pop('lastname', '')
-        info_present = kwargs.pop('info_present','False')
+        form_filled = kwargs.pop('form_filled','')
         today_date = datetime.datetime.now().strftime('%Y-%m-%d')
         patient_id = self.get_patient_id(firstname=firstname, lastname=lastname)
-        full_url = self.get_full_url('/api/appointments', date=today_date, patient=patient_id)
+        full_url = self.get_full_url('/api/appointments', date=today_date)
         print full_url
         response = requests.get(full_url, headers=self.headers)
         data = response.json()
@@ -58,7 +55,7 @@ class API_Access(object):
         if data['results']:
             for i in range(len(data['results'])):
                 if data['results'][i]['patient'] == patient_id:
-                    if info_present:
+                    if form_filled:
                         return data['results'][i]
 
                     scheduled_time = data['results'][i]['scheduled_time']

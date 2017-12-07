@@ -33,7 +33,7 @@ SOCIAL_AUTH_DRCHRONO_SCOPE = [
     'calendar:read',
     'calendar:write'
     ]
-LOGIN_REDIRECT_URL = '/checkin_kiosk/accounts/profile/'
+LOGIN_REDIRECT_URL = '/checkin_kiosk/app/'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,6 +53,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'drchrono',
     'social_django',
+    'localflavor',
+    'crispy_forms'
 )
 
 MIDDLEWARE_CLASSES = (

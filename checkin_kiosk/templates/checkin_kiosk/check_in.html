@@ -1,7 +1,7 @@
 {% load staticfiles %} {% load app_filters %} {% load static %}
 
 {% include "checkin_kiosk/nav.html" %}
-<script	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
 <style>
 .tss table {  
     color: #333; /* Lighten up font color */
@@ -21,7 +21,7 @@
 <h1> Patients Check-In </h1>
 <hr style="border-top: 1px solid #DDD;"></hr>
 
-<form action="{% url 'search_appointment' %}" method="POST" autocomplete="off"> {% csrf_token %}
+<form action="" method="POST" autocomplete="off"> {% csrf_token %}
 <div class="container" style="margin-top:30px">
 <div class="col-md-10 col-md-offset-1">
     <div class="panel panel-default">
@@ -44,6 +44,7 @@
                         {{form.lastname.errors}}
 			</div>
 		</div>
+
 	   </div>
 {% if cred %}
 	   <div class="form-group">
@@ -61,7 +62,6 @@
                         {{form.lastname}}
 			</div>
 		</div>
-
 	   </div>
   <button type="submit" id="apt_button" class="btn btn-success">Search my appointment</button>
   
@@ -101,9 +101,7 @@
 	{% endfor %}
 	</table>     
    </br>
-   <button type="submit" class="btn btn-success" style="margin-left: 100px;" href="{% url 'demographic_form' patient_id %}">
-	   Check-In
-	</button>
+   <button type="submit" class="btn btn-success" style="margin-left: 100px;" name="_test2">Check-In</button>
  
    </div>
   </div>
@@ -112,4 +110,4 @@
 {% endif %}
 
 </form>
-
+<div>

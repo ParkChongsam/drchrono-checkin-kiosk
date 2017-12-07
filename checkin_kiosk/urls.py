@@ -5,16 +5,16 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from .views import CheckInPageView, DemographicsFormView, SuccessPageView, DoctorPageView, CompleteSessionPageView
 
 urlpatterns = [
-    url(r'^accounts/profile/', CheckInPageView.as_view(), name='search_appointment'),
+    url(r'^app/$', CheckInPageView.as_view(), name='search_appointment'),
     url(
-        r'^accounts/profile/update_info/(?P<patient_id>\d+)$', 
+        r'^app/update_info/(?P<patient_id>\d+)$', 
         DemographicsFormView.as_view(), 
         name='demographic_form'
     ),
-    url(r'^accounts/profile/success/(?P<room_id>\d+)$', SuccessPageView.as_view(), name='success'),
-    url(r'^accounts/profile/dashboard$', DoctorPageView.as_view(), name='doctor_page'),
+    url(r'^app/success/(?P<room_id>\d+)$', SuccessPageView.as_view(), name='success'),
+    url(r'^app/dashboard$', DoctorPageView.as_view(), name='doctor_page'),
     url(
-        r'^accounts/profile/complete/(?P<appointment_id>\d+)$', 
+        r'^app/complete/(?P<appointment_id>\d+)$', 
         CompleteSessionPageView.as_view(), 
         name='complete_session'
     ),
