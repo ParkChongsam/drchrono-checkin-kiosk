@@ -2,6 +2,10 @@
 
 {% include "checkin_kiosk/nav.html" %}
 
+<head>
+    <meta http-equiv="refresh" content="5; url={% url 'search_appointment' %}">
+</head>
+
     <script src="https://unpkg.com/jquery"></script>
     
     <script src="https://surveyjs.azureedge.net/0.12.17/survey.jquery.js"></script>
@@ -18,8 +22,10 @@
    <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title"><strong>Success!   </strong></h3> </div>
     <div class="panel-body">
-	You are successfully checked in to your appointment in room number {{ room_id }}. Please wait for the attendant to call your name.
-
+    You are successfully checked in to your appointment in room number {{ room_id }}. Please wait for the attendant to call your name.
+    <br>
+    <br>
+    Redirecting back to the self check-in page...
     </div>
    </div>
  </div>

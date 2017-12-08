@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-from .views import CheckInPageView, DemographicsFormView, SuccessPageView, DoctorPageView, CompleteSessionPageView
+from .views import CheckInPageView, DemographicsFormView, SuccessPageView, DoctorPageView, CompleteSessionPageView, AverageWaitTimeView
 
 urlpatterns = [
     url(r'^app/$', CheckInPageView.as_view(), name='search_appointment'),
@@ -18,6 +18,7 @@ urlpatterns = [
         CompleteSessionPageView.as_view(), 
         name='complete_session'
     ),
+    url(r'^app/wait_time/$', AverageWaitTimeView, name='wait_time'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

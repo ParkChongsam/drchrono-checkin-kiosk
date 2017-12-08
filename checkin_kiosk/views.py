@@ -10,14 +10,20 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate, get_user_model, login, logout
 
 from .forms import PatientSignInForm, PatientDemographicsForm
-from .models import Appointment
+from .models import AppointmentHistory, AverageWaitTime
 from .api_access import API_Access
 from .shortcuts import Shortcuts
-from .helper_functions import get_user_access_token, get_current_appointment, split_appointments
+from .helper_functions import (
+    get_user_access_token, 
+    get_current_appointment,
+    get_correct_time, 
+    split_appointments, 
+    get_wait_time, 
+    get_average_wait_time
+)
 
 from dateutil import parser
 import datetime
-from pytz import timezone
 
 # Views
 class CheckInPageView(View):
@@ -105,28 +111,22 @@ class DemographicsFormView(FormView):
             self.appointment['status'] = Shortcuts.Statuses.ARRIVED 
             response = self.api_access.edit_appointment_information(appointment_id, self.appointment)
             if response.status_code != Shortcuts.ErrorCodes.SUCCESS:
-                print 'Error updating appointment info'
                 return HttpResponseRedirect(reverse('demographic_form', args=[patient_id]))
 
             else:
-                appointment_obj = Appointment.objects.get(
+                appointment_obj, created = AppointmentHistory.objects.get_or_create(
+                    name=name,
                     appointment_id=appointment_id,
-                    patient_id=str(patient_id)
+                    patient_id=patient_id,
+                    status=Shortcuts.Statuses.ARRIVED,
+                    appointment_start_time=parser.parse(self.appointment['scheduled_time']),
+                    appointment_duration=self.appointment['duration']
                 )
-                if not appointment_obj:
-                    appointment_object = Appointment(
-                        name=name,
-                        appointment_id=appointment_id,
-                        patient_id=self.patient_id,
-                        status=Shortcuts.Statuses.ARRIVED,
-                        appointment_start_time=parser.parse(self.appointment['scheduled_time']),
-                        appointment_duration = self.appointment['duration']
-                    )
+                if created:
                     try:
-                        appointment_object.save()
+                        appointment_obj.save()
                     except Exception as e:
                         return HttpResponseRedirect(reverse('demographic_form', args=[patient_id]))
-                
                 else:
                     appointment_obj.status = Shortcuts.Statuses.ARRIVED
                     appointment_obj.appointment_start_time = parser.parse(self.appointment['scheduled_time'])
@@ -150,35 +150,44 @@ class DoctorPageView(FormView):
     template_name = 'checkin_kiosk/doctor_page.html'
 
     def get(self, request, *args, **kwargs):
-        Appointment.objects.all().delete()
+        AppointmentHistory.objects.all().delete()
         current_appointment, appointments = split_appointments(request)
-        print current_appointment
-        print appointments
         context = {
             'current_appointment': current_appointment,
-            'appointments': appointments
+            'appointments': appointments,
         }
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        Appointment.objects.all().delete()
         if 'refresh' in request.POST:
+            AppointmentHistory.objects.all().delete()
             current_appointment, appointments = split_appointments(request)
-            print current_appointment
-            print appointments
             context = {
                 'current_appointment': current_appointment,
-                'appointments': appointments
+                'appointments': appointments,
             }
             return render(request, self.template_name, context)
 
         elif 'begin' in request.POST:
             appointment_id = request.POST.get('appointment_id')
             patient_id = request.POST.get('patient_id')
-            appointment = Appointment.objects.get(appointment_id=appointment_id, patient_id=patient_id)
+            appointment, created = AppointmentHistory.objects.get_or_create(
+                appointment_id=appointment_id, 
+                patient_id=patient_id
+            )
+            print appointment.status_time
+            check_in_time = appointment.status_time
             appointment.status = Shortcuts.Statuses.IN_SESSION
-            appointment.appointment_start_time = datetime.datetime.now()
+            appointment.session_start_time = datetime.datetime.now()
+            appointment.status_time = appointment.session_start_time
             appointment.save()
+            app_id = appointment.appointment_id
+            start_time = appointment.status_time
+            wait_time = get_wait_time(check_in_time, start_time)[0]
+            wait_time_obj, created = AverageWaitTime.objects.get_or_create(
+                appointment_id=app_id,
+                wait_time=wait_time
+            )
             return HttpResponseRedirect(reverse('complete_session', args=[appointment_id]))
 
 class CompleteSessionPageView(FormView):
@@ -186,7 +195,7 @@ class CompleteSessionPageView(FormView):
 
     def get(self, request, *args, **kwargs):
         appointment_id = kwargs['appointment_id']
-        current_appointment = Appointment.objects.get(appointment_id=appointment_id)
+        current_appointment = AppointmentHistory.objects.get(appointment_id=appointment_id)
         context = {
             'current_appointment': current_appointment,
             'completed_appointment': None
@@ -195,18 +204,34 @@ class CompleteSessionPageView(FormView):
 
     def post(self, request, *args, **kwargs):
         appointment_id = kwargs['appointment_id']
-        appointment = Appointment.objects.get(appointment_id=appointment_id)
+        appointment = AppointmentHistory.objects.get(appointment_id=appointment_id)
         curr_appointment = appointment
         appointment.status = Shortcuts.Statuses.COMPLETE
         appointment.session_end_time = datetime.datetime.now()
+        appointment.status_time = appointment.session_end_time
         appointment.save()
-        comp_appointment = Appointment.objects.get(appointment_id=appointment_id)
+        comp_appointment = AppointmentHistory.objects.get(appointment_id=appointment_id)
         context = {
             'current_appointment': curr_appointment,
             'completed_appointment': comp_appointment
         }
         return render(request, self.template_name, context)
 
+def AverageWaitTimeView(request):
+    template_name = 'checkin_kiosk/wait_time.html'
+    wait_time_objects = AverageWaitTime.objects.all()
+    print wait_time_objects
+    if not wait_time_objects:
+        average_wait_time = 0
+    else:
+        wait_times = []
+        for wait_time_obj in wait_time_objects:
+            wait_times.append(wait_time_obj.wait_time)
+        average_wait_time = get_average_wait_time(wait_times)[0]
+    context = {
+        'average_wait_time': average_wait_time
+    }
+    return render(request, template_name, context)
 
     
 

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
-class Appointment(models.Model):
+class AppointmentHistory(models.Model):
     name = models.CharField(max_length=100, null=True)
     appointment_id = models.IntegerField()
     patient_id = models.IntegerField(null=True)
@@ -19,3 +19,10 @@ class Appointment(models.Model):
     class Meta:
         unique_together = ('appointment_id', 'appointment_start_time')
         ordering = ['-status_time']
+
+class AverageWaitTime(models.Model):
+    appointment_id = models.IntegerField(null=True)
+    wait_time = models.IntegerField(null=True)
+
+    def __unicode__(self):
+        return str(self.wait_time)

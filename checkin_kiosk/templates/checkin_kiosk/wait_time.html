@@ -1,0 +1,44 @@
+{% load staticfiles %} {% load app_filters %} {% load static %} 
+
+{% include "checkin_kiosk/nav.html" %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<style>
+    .tss table {
+        color: #333;
+        /* Lighten up font color */
+        font-family: Helvetica, Arial, sans-serif;
+        /* Nicer font */
+        width: 640px;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-left: 100px;
+    }
+
+    .tss td {
+        border: 1px solid #CCC;
+        height: 30px;
+    }
+
+    /* Make cells a bit taller */
+
+    .tss td {
+        background: #FAFAFA;
+        /* Lighter grey background */
+        text-align: center;
+        /* Center our text */
+    }
+</style>
+<br>
+<br>
+<br>
+<br>
+<div class="container" style="margin-top:0px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"> Average Wait Time </h6>
+                <p> Your average wait time is {{ average_wait_time }} seconds. This is the average time elapsed between the patient checking in and the start of his/her appointment.</p>
+            </div>
+        </div>
+    </div>
+</div>
